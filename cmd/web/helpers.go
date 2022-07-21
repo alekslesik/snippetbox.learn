@@ -27,3 +27,20 @@ func (app *application) clientError(w http.ResponseWriter, status int) {
 func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
+
+func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
+
+	// extract pattern depending "name"
+	ts, ok := app.templateCache[name]
+	if !ok {
+		app.serverError(w, fmt.Errorf("Pattern %s not exist!", name))
+		return
+	}
+
+	// rendering pattern files passing dynamic data from td variable
+	err := ts.Execute(w, td)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+}
