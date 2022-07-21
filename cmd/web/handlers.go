@@ -21,8 +21,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Создаем экземпляр структуры templateData,
-    // содержащий срез с заметками.
     data := &templateData{Snippets: s}
 
     files := []string{
@@ -37,8 +35,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Передаем структуру templateData в шаблонизатор.
-    // Теперь она будет доступна внутри файлов шаблона через точку.
     err = ts.Execute(w, data)
     if err != nil {
         app.serverError(w, err)
@@ -62,7 +58,6 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Создаем экземпляр структуры templateData, содержащей данные заметки.
     data := &templateData{Snippet: s}
 
     files := []string{
@@ -77,7 +72,6 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Передаем структуру templateData в качестве данных для шаблона.
     err = ts.Execute(w, data)
     if err != nil {
         app.serverError(w, err)
@@ -91,19 +85,15 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    // Создаем несколько переменных, содержащих тестовые данные. Мы удалим их позже.
     title := "История про улитку"
     content := "Улитка выползла из раковины,\nвытянула рожки,\nи опять подобрала их."
     expires := "7"
 
-    // Передаем данные в метод SnippetModel.Insert(), получая обратно
-    // ID только что созданной записи в базу данных.
     id, err := app.snippets.Insert(title, content, expires)
     if err != nil {
         app.serverError(w, err)
         return
     }
 
-    // Перенаправляем пользователя на соответствующую страницу заметки.
     http.Redirect(w, r, fmt.Sprintf("/snippet?id=%d", id), http.StatusSeeOther)
 }

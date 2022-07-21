@@ -7,13 +7,11 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/alekslesik/snippetbox.learn/pkg/models/mysql" // Новый импорт
+	"github.com/alekslesik/snippetbox.learn/pkg/models/mysql"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// Добавляем поле snippets в структуру application. Это позволит
-// сделать объект SnippetModel доступным для наших обработчиков.
 type application struct {
 	errorLog *log.Logger
 	infoLog  *log.Logger
@@ -36,7 +34,6 @@ func main() {
 
 	defer db.Close()
 
-	// Инициализируем экземпляр mysql.SnippetModel и добавляем его в зависимостях.
 	app := &application{
 		errorLog: errorLog,
 		infoLog:  infoLog,
