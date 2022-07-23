@@ -3,10 +3,12 @@ package main
 import (
 	"database/sql"
 	"flag"
+	// "fmt"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
+	// "path/filepath"
 
 	"github.com/alekslesik/snippetbox.learn/pkg/models/mysql"
 
@@ -34,7 +36,6 @@ func main() {
 	}
 
 	defer db.Close()
-
 
 
 	// initialise new cache pattern

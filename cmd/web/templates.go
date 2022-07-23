@@ -2,6 +2,7 @@ package main
 
 import (
 	"html/template"
+	"os"
 	"path/filepath"
 
 	"github.com/alekslesik/snippetbox.learn/pkg/models"
@@ -13,12 +14,20 @@ type templateData struct {
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
+
+    ex, err := os.Executable()
+    if err != nil {
+        panic(err)
+    }
+    exePath := filepath.Dir(ex)
+    // fmt.Println(exePath)
+
     // init new map keeping cache
     cache := map[string]*template.Template{}
 
     // use func Glob to get all filepathes slice with '.page.html' ext
 
-    pages, err := filepath.Glob(filepath.Join(dir, "*.page.html"))
+    pages, err := filepath.Glob(filepath.Join(exePath + dir, "*.page.html"))
     if err != nil {
         return nil, err
     }
