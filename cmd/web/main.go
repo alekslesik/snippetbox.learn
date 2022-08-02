@@ -39,9 +39,9 @@ func main() {
 
 
 	// initialise new cache pattern
-	templateCache, err := newTemplateCache("./ui/html")
+	// templateCache, err := newTemplateCache("./ui/html")
 	// for debug
-	// templateCache, err := newTemplateCache("../../ui/html")
+	templateCache, err := newTemplateCache("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
