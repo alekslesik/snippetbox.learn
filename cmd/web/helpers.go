@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"runtime/debug"
+	"time"
 )
 
 // Помощник serverError записывает сообщение об ошибке в errorLog и
@@ -29,12 +30,25 @@ func (app *application) notFound(w http.ResponseWriter) {
 	app.clientError(w, http.StatusNotFound)
 }
 
+// Create an addDefaultData helper. This takes a pointer to a templateData
+// struct, adds the current year to the CurrentYear field, and then returns
+// the pointer. Again, we're not using the *http.Request parameter at the
+// moment, but we will do later in the book.
+func (app *application) addDefaultData(td *templateData, r *http.Request) *templateData {
+	if td == nil {
+		td = &templateData{}
+	}
+
+	td.CurrentYear = time.Now().Year()
+	return td
+}
+
 func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
 
 	// extract pattern depending "name"
 	ts, ok := app.templateCache[name]
 	if !ok {
-		app.serverError(w, fmt.Errorf("Pattern %s not exist!", name))
+		app.serverError(w, fmt.Errorf("pattern %s not exist", name))
 		return
 	}
 
@@ -42,7 +56,7 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 	buf := new(bytes.Buffer)
 
 	// write template to the buffer, instead straight to http.ResponseWriter
-	err := ts.Execute(buf, td)
+	err := ts.Execute(buf, app.addDefaultData(td, r))
 	if err != nil {
 		app.serverError(w, err)
 		return
@@ -50,11 +64,4 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 
 	// write buffer to http.ResponseWriter
 	buf.WriteTo(w)
-
-	// rendering pattern files passing dynamic data from td variable
-	// err = ts.Execute(w, td)
-	// if err != nil {
-	// 	app.serverError(w, err)
-	// }
-
 }
