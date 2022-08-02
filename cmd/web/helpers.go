@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"runtime/debug"
@@ -37,10 +38,23 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		return
 	}
 
-	// rendering pattern files passing dynamic data from td variable
-	err := ts.Execute(w, td)
+	// initialize a new buffer
+	buf := new(bytes.Buffer)
+
+	// write template to the buffer, instead straight to http.ResponseWriter
+	err := ts.Execute(buf, td)
 	if err != nil {
 		app.serverError(w, err)
+		return
 	}
+
+	// write buffer to http.ResponseWriter
+	buf.WriteTo(w)
+
+	// rendering pattern files passing dynamic data from td variable
+	// err = ts.Execute(w, td)
+	// if err != nil {
+	// 	app.serverError(w, err)
+	// }
 
 }
