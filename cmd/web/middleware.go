@@ -24,7 +24,7 @@ func (app *application) logRequest(next http.Handler) http.Handler {
 
 func (app *application) recoverPanic(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		defer func ()  {
+		defer func() {
 			if err := recover(); err != nil {
 				// if panic - set Connection close
 				w.Header().Set("Connection", "close")
