@@ -11,7 +11,7 @@ func (app *application) routes() http.Handler {
 
 	standardMiddleware := alice.New(app.recoverPanic, app.logRequest, secureHeaders)
 
-	// mux := http.NewServeMux()
+	// new pat router with REST
 	mux := pat.New()
 	mux.Get("/", http.HandlerFunc(app.home))
 	mux.Get("/snippet/create", http.HandlerFunc(app.createSnippetForm))
