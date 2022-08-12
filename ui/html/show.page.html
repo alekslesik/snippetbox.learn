@@ -1,6 +1,6 @@
 {{template "base" .}}
 
-{{define "title"}}Заметка #{{.Snippet.ID}}{{end}}
+{{define "title"}}Snippet #{{.Snippet.ID}}{{end}}
 
 {{define "main"}}
     {{with .Snippet}}
@@ -11,8 +11,8 @@
         </div>
         <pre><code>{{.Content}}</code></pre>
         <div class='metadata'>
-            <time>Создан: {{humanDate .Created}}</time>
-            <time>Срок: {{humanDate .Expires}}</time>
+            <time>Created: {{humanDate .Created}}</time>
+            <time>Expires: {{humanDate .Expires}}</time>
         </div>
     </div>
     {{end}}
