@@ -3,12 +3,10 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strings"
-	"unicode/utf8"
 
+	"github.com/alekslesik/snippetbox.learn/pkg/forms"
 	"github.com/alekslesik/snippetbox.learn/pkg/models"
 
-	// "html/template"
 	"net/http"
 	"strconv"
 )
@@ -48,11 +46,13 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "create.page.html", nil)
+	app.render(w, r, "create.page.html", &templateData{
+		// pass a new empty forms.Form object to the template
+		Form: forms.New(nil),
+	})
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
-
 	// adds any data in POST request bodies to the r.PostForm map
 	err := r.ParseForm()
 	if err != nil {
@@ -60,43 +60,22 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	title := r.PostForm.Get("title")
-	content := r.PostForm.Get("content")
-	expires := r.PostForm.Get("expires")
-
-	// map to hold validation errors
-	errors := make(map[string]string)
-
-	// validate title data
-	if strings.TrimSpace(title) == "" {
-		errors["title"] = "This field cannot be blank"
-	} else if utf8.RuneCountInString(title) > 100 {
-		errors["title"] = "This field is too long (maximum is 100 characters)"
-	}
-
-	// validate content data
-	if strings.TrimSpace(content) == "" {
-		errors["content"] = "This field cannot be blank"
-	}
-
-	// validate expires data
-	if strings.TrimSpace(expires) == "" {
-		errors["expires"] = "This field cannot be blank"
-	} else if expires != "365" && expires != "7" && expires != "1" {
-		errors["expires"] = "This field is invalid"
-	}
-
+	// Create forms.Form containing the POSTed data from the form
+	form := forms.New(r.PostForm)
+	// Use validation functions
+	form.Required("title", "content", "expires")
+	form.MaxLength("title", 100)
+	form.PermittedValues("expires", "365", "7", "1")
 	// if any errors, redisplay the create.page.html paasingvalidation errors and
 	// previously submitted r.PostForm data
-	if len(errors) > 0 {
+	if !form.Valid() {
 		app.render(w, r, "create.page.html", &templateData{
-			FormErrors: errors,
-			FormData:   r.PostForm,
+			Form: form,
 		})
 		return
 	}
 
-	id, err := app.snippets.Insert(title, content, expires)
+	id, err := app.snippets.Insert(form.Get("title"), form.Get("content"), form.Get("expires"))
 	if err != nil {
 		app.serverError(w, err)
 		return

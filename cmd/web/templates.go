@@ -2,17 +2,16 @@ package main
 
 import (
 	"html/template"
-	"net/url"
 	"path/filepath"
 	"time"
 
+	"github.com/alekslesik/snippetbox.learn/pkg/forms"
 	"github.com/alekslesik/snippetbox.learn/pkg/models"
 )
 
 type templateData struct {
 	CurrentYear int
-	FormData    url.Values
-	FormErrors  map[string]string
+	Form        *forms.Form
 	Snippet     *models.Snippet
 	Snippets    []*models.Snippet
 }
@@ -27,12 +26,10 @@ var functions = template.FuncMap{
 }
 
 func newTemplateCache(dir string) (map[string]*template.Template, error) {
-
 	// init new map keeping cache
 	cache := map[string]*template.Template{}
 
 	// use func Glob to get all filepathes slice with '.page.html' ext
-
 	pages, err := filepath.Glob(filepath.Join(dir, "*.page.html"))
 	if err != nil {
 		return nil, err
@@ -67,5 +64,4 @@ func newTemplateCache(dir string) (map[string]*template.Template, error) {
 	}
 
 	return cache, nil
-
 }
