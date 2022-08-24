@@ -66,6 +66,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	form.Required("title", "content", "expires")
 	form.MaxLength("title", 100)
 	form.PermittedValues("expires", "365", "7", "1")
+
 	// if any errors, redisplay the create.page.html paasingvalidation errors and
 	// previously submitted r.PostForm data
 	if !form.Valid() {
@@ -80,6 +81,9 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
+
+	// Add a astring value and key to the session data
+	app.session.Put(r, "flash", "Snippet sucessfully created")
 
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
