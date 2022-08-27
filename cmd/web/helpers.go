@@ -45,7 +45,6 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 }
 
 func (app *application) render(w http.ResponseWriter, r *http.Request, name string, td *templateData) {
-
 	// extract pattern depending "name"
 	ts, ok := app.templateCache[name]
 	if !ok {
