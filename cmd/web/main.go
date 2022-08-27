@@ -68,7 +68,11 @@ func main() {
 	}
 
 	infoLog.Printf("Server started on http://127.0.0.1%s", *addr)
-	err = srv.ListenAndServe()
+
+	// Use the ListenAndServeTLS() method to start the HTTPS server. We
+	// pass in the paths to the TLS certificate and corresponding private key a
+	// the two parameters.
+	err = srv.ListenAndServeTLS("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 	errorLog.Fatal(err)
 }
 
