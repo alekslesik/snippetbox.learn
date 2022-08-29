@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"flag"
 	"html/template"
@@ -42,7 +43,11 @@ func main() {
 	defer db.Close()
 
 	// Initialise new cache pattern
-	templateCache, err := newTemplateCache("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
+	// my note path
+	// templateCache, err := newTemplateCache("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
+
+	// proletar note path
+	templateCache, err := newTemplateCache("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -60,11 +65,19 @@ func main() {
 		templateCache: templateCache,
 	}
 
+	// Initialize a tls.Config struct to hold the non-default TLS settings the server to use.
+	tlsConfig:= &tls.Config {
+		PreferServerCipherSuites: true,
+		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
+		MinVersion: tls.VersionTLS12,
+	}
+
 	// Confugure server
 	srv := &http.Server{
 		Addr:     *addr,
 		ErrorLog: errorLog,
 		Handler:  app.routes(),
+		TLSConfig: tlsConfig,
 	}
 
 	infoLog.Printf("Server started on http://127.0.0.1%s", *addr)
@@ -72,7 +85,12 @@ func main() {
 	// Use the ListenAndServeTLS() method to start the HTTPS server. We
 	// pass in the paths to the TLS certificate and corresponding private key a
 	// the two parameters.
-	err = srv.ListenAndServeTLS("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
+
+	// my note path
+	// err = srv.ListenAndServeTLS("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
+
+	// proletar note path
+	err = srv.ListenAndServeTLS("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 	errorLog.Fatal(err)
 }
 
