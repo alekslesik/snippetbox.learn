@@ -44,10 +44,10 @@ func main() {
 
 	// Initialise new cache pattern
 	// my note path
-	// templateCache, err := newTemplateCache("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
+	templateCache, err := newTemplateCache("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
 
 	// proletar note path
-	templateCache, err := newTemplateCache("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
+	// templateCache, err := newTemplateCache("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -91,10 +91,10 @@ func main() {
 	// the two parameters.
 
 	// my note path
-	// err = srv.ListenAndServeTLS("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
+	err = srv.ListenAndServeTLS("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 
 	// proletar note path
-	err = srv.ListenAndServeTLS("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
+	// err = srv.ListenAndServeTLS("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 	errorLog.Fatal(err)
 }
 
