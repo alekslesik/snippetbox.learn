@@ -65,7 +65,7 @@ func main() {
 		templateCache: templateCache,
 	}
 
-	// Initialize a tls.Config struct to hold the non-default TLS settings the server to use.
+	// Initialize a tls.Config struct to hold the non-default TLS settings the server to use
 	tlsConfig:= &tls.Config {
 		PreferServerCipherSuites: true,
 		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
