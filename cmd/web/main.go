@@ -17,6 +17,7 @@ import (
 )
 
 type application struct {
+	gopath        string
 	errorLog      *log.Logger
 	infoLog       *log.Logger
 	session       *sessions.Session
@@ -35,6 +36,11 @@ func main() {
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
+	gopath, ok := os.LookupEnv("GOPATH")
+	if !ok {
+		errorLog.Fatal("GOPATH variable not exists")
+	}
+
 	// Open DB connection pull
 	db, err := openDB(*dsn)
 	if err != nil {
@@ -43,11 +49,7 @@ func main() {
 	defer db.Close()
 
 	// Initialise new cache pattern
-	// my note path
-	templateCache, err := newTemplateCache("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
-
-	// proletar note path
-	// templateCache, err := newTemplateCache("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/ui/html")
+	templateCache, err := newTemplateCache(gopath + "/src/github.com/alekslesik/snippetbox.learn/ui/html")
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -58,6 +60,7 @@ func main() {
 
 	// Initialisation application struct
 	app := &application{
+		gopath:        gopath,
 		errorLog:      errorLog,
 		infoLog:       infoLog,
 		session:       session,
@@ -66,21 +69,21 @@ func main() {
 	}
 
 	// Initialize a tls.Config struct to hold the non-default TLS settings the server to use
-	tlsConfig:= &tls.Config {
+	tlsConfig := &tls.Config{
 		PreferServerCipherSuites: true,
-		CurvePreferences: []tls.CurveID{tls.X25519, tls.CurveP256},
-		MinVersion: tls.VersionTLS12,
+		CurvePreferences:         []tls.CurveID{tls.X25519, tls.CurveP256},
+		MinVersion:               tls.VersionTLS12,
 	}
 
 	// Confugure server
 	srv := &http.Server{
-		Addr:     *addr,
-		ErrorLog: errorLog,
-		Handler:  app.routes(),
+		Addr:      *addr,
+		ErrorLog:  errorLog,
+		Handler:   app.routes(),
 		TLSConfig: tlsConfig,
 		// Add Idle, Read and Write timeouts to the server
-		IdleTimeout: time.Minute,
-		ReadTimeout: 5 * time.Second,
+		IdleTimeout:  time.Minute,
+		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
 
@@ -89,12 +92,8 @@ func main() {
 	// Use the ListenAndServeTLS() method to start the HTTPS server. We
 	// pass in the paths to the TLS certificate and corresponding private key a
 	// the two parameters.
+	err = srv.ListenAndServeTLS(gopath+"/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", gopath+"/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 
-	// my note path
-	err = srv.ListenAndServeTLS("C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/Lesik/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
-
-	// proletar note path
-	// err = srv.ListenAndServeTLS("C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", "C:/Users/user/go/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 	errorLog.Fatal(err)
 }
 
