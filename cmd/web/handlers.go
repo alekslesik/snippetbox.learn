@@ -11,6 +11,7 @@ import (
 	"strconv"
 )
 
+// Home page
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	s, err := app.snippets.Latest()
 	if err != nil {
@@ -23,28 +24,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
-	if err != nil || id < 1 {
-		app.notFound(w)
-		return
-	}
-
-	s, err := app.snippets.Get(id)
-	if err != nil {
-		if errors.Is(err, models.ErrNoRecord) {
-			app.notFound(w)
-		} else {
-			app.serverError(w, err)
-		}
-		return
-	}
-
-	app.render(w, r, "show.page.html", &templateData{
-		Snippet: s,
-	})
-}
-
+// Create snippet GET /snippet/create
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "create.page.html", &templateData{
 		// pass a new empty forms.Form object to the template
@@ -52,6 +32,7 @@ func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request
 	})
 }
 
+// Create snippet POST /snippet/create
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// adds any data in POST request bodies to the r.PostForm map
 	err := r.ParseForm()
@@ -87,6 +68,30 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
+
+// Show snippet GET /snippet/:id
+func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
+	if err != nil || id < 1 {
+		app.notFound(w)
+		return
+	}
+
+	s, err := app.snippets.Get(id)
+	if err != nil {
+		if errors.Is(err, models.ErrNoRecord) {
+			app.notFound(w)
+		} else {
+			app.serverError(w, err)
+		}
+		return
+	}
+
+	app.render(w, r, "show.page.html", &templateData{
+		Snippet: s,
+	})
+}
+
 
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Display the user signup form...")
