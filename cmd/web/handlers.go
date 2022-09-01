@@ -63,9 +63,10 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Add a astring value and key to the session data
+	// Add a string value and key to the session data
 	app.session.Put(r, "flash", "Snippet sucessfully created")
 
+	// GET
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
@@ -92,13 +93,14 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-
+// Sign up user GET /user/signup
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "signup.page.html", &templateData{
 		Form: forms.New(nil),
 	})
 }
 
+// Sign up user POST /user/signup
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	// Parse the form data.
 	err := r.ParseForm()
@@ -121,18 +123,39 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Otherwise send a placeholder response (for now!).
-	fmt.Fprintln(w, "Create a new user...")
+	// Try to create a new user record in the database. If the email already exist
+	// add an error message to the form and re-display it.
+	err = app.users.Insert(form.Get("name"), form.Get("email"), form.Get("password"))
+	if err == models.ErrDuplicateEmail {
+		form.Errors.Add("email", "Address is already in use")
+		app.render(w, r, "signup.page.html", &templateData{
+			Form: form,
+		})
+		return
+	} else if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	// Otherwise add a confirmation flash message to the session confirming
+	// their signup worked and asking them to log in.
+	app.session.Put(r, "flash", "Your signup was successful. Please log in.")
+
+	// GET
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
+// Login user GET /user/login
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Display the user login form...")
 }
 
+// Login user POST /user/login
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Authenticate and login the user...")
 }
 
+// Logout user POST
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Logout the user...")
 }
