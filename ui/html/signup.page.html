@@ -1,8 +1,8 @@
 {{template "base" .}}
 
-{{define "title"}} Signup {{end}}
+{{define "title"}}Signup{{end}}
 
-{{define "main"}}
+{{define "body"}}
 <form action="/user/signup" method="post" novalidate>
     {{with .Form}}
     <div>
@@ -10,7 +10,7 @@
         {{with .Errors.Get "name"}}
         <label for="" class="error">{{.}}</label>
         {{end}}
-        <input type="text" name="name" value='{{ .Get "name" }}'>
+        <input type="text" name="name" value='{{.Get "name"}}'>
     </div>
     <div>
         <label>Email:</label>

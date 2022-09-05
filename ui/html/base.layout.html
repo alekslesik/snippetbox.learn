@@ -28,10 +28,10 @@
         </div>
     </nav>
     <main>
-        {{ with .Flash }}
+        {{with .Flash}}
         <div class="flash">{{ . }}</div>
-        {{ end }}
-        {{template "main" .}}
+        {{end}}
+        {{template "body" .}}
     </main>
     {{template "footer" .}}
     <script src="/static/js/main.js" type="text/javascript"></script>
