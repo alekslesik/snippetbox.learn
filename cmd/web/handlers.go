@@ -11,7 +11,7 @@ import (
 	"strconv"
 )
 
-// Home page
+// Home page.
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	s, err := app.snippets.Latest()
 	if err != nil {
@@ -24,15 +24,17 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Create snippet GET /snippet/create
+// Create snippet GET /snippet/create.
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
+
+	
 	app.render(w, r, "create.page.html", &templateData{
 		// pass a new empty forms.Form object to the template
 		Form: forms.New(nil),
 	})
 }
 
-// Create snippet POST /snippet/create
+// Create snippet POST /snippet/create.
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	// adds any data in POST request bodies to the r.PostForm map
 	err := r.ParseForm()
@@ -70,7 +72,7 @@ func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/snippet/%d", id), http.StatusSeeOther)
 }
 
-// Show snippet GET /snippet/:id
+// Show snippet GET /snippet/:id.
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.URL.Query().Get(":id"))
 	if err != nil || id < 1 {
@@ -93,14 +95,14 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// Sign up user GET /user/signup
+// Sign up user GET /user/signup.
 func (app *application) signupUserForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "signup.page.html", &templateData{
 		Form: forms.New(nil),
 	})
 }
 
-// Sign up user POST /user/signup
+// Sign up user POST /user/signup.
 func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	// Parse the form data.
 	err := r.ParseForm()
@@ -145,14 +147,14 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
-// Login user GET /user/login
+// Login user GET /user/login.
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "login.page.html", &templateData{
 		Form: forms.New(nil),
 	})
 }
 
-// Login user POST /user/login
+// Login user POST /user/login.
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -180,7 +182,7 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
 }
 
-// Logout user POST
+// Logout user POST.
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 
 	// Remove iserID from session.

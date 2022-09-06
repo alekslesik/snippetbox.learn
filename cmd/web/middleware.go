@@ -36,3 +36,19 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+// If the user is not authenticated, redirect them to the login page and
+// return from the middleware chain so that no subsequent handlers in
+// the chain are executed.
+func (app *application) requireAuthenticatedUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if app.authenticatedUser(r) == 0 {
+			app.session.Put(r, "flash", "Please login")
+			http.Redirect(w, r, "/user/login", http.StatusFound)
+			return
+		}
+
+		// Otherwise call the next handler in the chain.
+		next.ServeHTTP(w, r)
+	})
+}
