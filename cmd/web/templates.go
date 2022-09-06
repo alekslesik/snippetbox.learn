@@ -10,11 +10,12 @@ import (
 )
 
 type templateData struct {
-	Flash       string
-	CurrentYear int
-	Form        *forms.Form
-	Snippet     *models.Snippet
-	Snippets    []*models.Snippet
+	AuthenticatedUser int
+	Flash             string
+	CurrentYear       int
+	Form              *forms.Form
+	Snippet           *models.Snippet
+	Snippets          []*models.Snippet
 }
 
 // Return nicely formatted string of time.Time object
