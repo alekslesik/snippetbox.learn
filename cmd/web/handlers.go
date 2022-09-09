@@ -26,8 +26,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 
 // Create snippet GET /snippet/create.
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
-
-	
 	app.render(w, r, "create.page.html", &templateData{
 		// pass a new empty forms.Form object to the template
 		Form: forms.New(nil),

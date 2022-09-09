@@ -14,7 +14,7 @@ func (app *application) routes() http.Handler {
 
 	// Create a new middleware chain containing the middleware specific to
 	// our dynamic application routes.
-	dynamicMiddleware := alice.New(app.session.Enable)
+	dynamicMiddleware := alice.New(app.session.Enable, noSurf)
 
 	// New pat router with REST
 	mux := pat.New()
