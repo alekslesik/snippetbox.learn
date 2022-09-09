@@ -58,6 +58,8 @@ func main() {
 	// Initialize a new session manager
 	session := sessions.New([]byte(*secret))
 	session.Lifetime = 12 * time.Hour
+	session.Secure = true
+	session.SameSite = http.SameSiteStrictMode
 
 	// Initialisation application struct
 	app := &application{
