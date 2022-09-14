@@ -100,7 +100,7 @@ func main() {
 	// Use the ListenAndServeTLS() method to start the HTTPS server. We
 	// pass in the paths to the TLS certificate and corresponding private key a
 	// the two parameters.
-	err = srv.ListenAndServeTLS(gopath + "/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", gopath+"/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
+	err = srv.ListenAndServeTLS(gopath + "/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", gopath + "/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 
 	errorLog.Fatal(err)
 }
