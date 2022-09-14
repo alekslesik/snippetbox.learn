@@ -11,6 +11,11 @@ import (
 	"strconv"
 )
 
+// Ping
+func ping(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("OK"))
+}
+
 // Home page.
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	s, err := app.snippets.Latest()
