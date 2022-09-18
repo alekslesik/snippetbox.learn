@@ -32,5 +32,8 @@ func (app *application) routes() http.Handler {
 	fileServer := http.FileServer(http.Dir("./ui/static/"))
 	mux.Get("/static/", http.StripPrefix("/static", fileServer))
 
+	// for end-to-end testing
+	mux.Get("/ping", http.HandlerFunc(ping))
+
 	return standardMiddleware.Then(mux)
 }
