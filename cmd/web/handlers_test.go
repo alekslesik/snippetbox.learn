@@ -1,11 +1,7 @@
 package main
 
 import (
-	"io"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 )
 
@@ -14,10 +10,11 @@ func TestPing(t *testing.T) {
 
 	// Create a new instance of our application struct. For now, this just
 	// contains a couple of mock loggers (which discard anything written to them).
-	app := &application{
-		errorLog: log.New(ioutil.Discard, "", 0),
-		infoLog:  log.New(ioutil.Discard, "", 0),
-	}
+	// app := &application{
+	// 	errorLog: log.New(ioutil.Discard, "", 0),
+	// 	infoLog:  log.New(ioutil.Discard, "", 0),
+	// }
+	app := newTestApplication(t)
 
 	// We then use the httptest.NewTLSServer() function to create a new test
 	// server, passing in the value returned by our app.routes() method as the
@@ -25,17 +22,20 @@ func TestPing(t *testing.T) {
 	// randomly-chosen port of your local machine for the duration of the test.
 	// Notice that we defer a call to ts.Close() to shutdown the server when
 	// the test finishes.
-	ts := httptest.NewTLSServer(app.routes())
+	// ts := httptest.NewTLSServer(app.routes())
+	ts := newTestServer(t, app.routes())
 	defer ts.Close()
 
 	// The network address that the test server is listening on is contained
 	// in the ts.URL field. We can use this along with the ts.Client().Get()
 	// method to make a GET /ping request against the test server. This
 	// returns a http.Response struct containing the response.
-	rs, err := ts.Client().Get(ts.URL + "/ping")
-	if err != nil {
-		t.Fatal(err)
-	}
+	// rs, err := ts.Client().Get(ts.URL + "/ping")
+	// if err != nil {
+	//    t.Fatal(err)
+	// }
+
+	statusCode, _, body := ts.get(t, "/ping")
 
 	// Initialize a new httptest.ResponseRecorder.
 	// rr := httptest.NewRecorder()
@@ -56,17 +56,17 @@ func TestPing(t *testing.T) {
 
 	// We can then examine the http.Response to check that the status code
 	// written by the ping handler was 200.
-	if rs.StatusCode != http.StatusOK {
-		t.Errorf("want %d, got %d", http.StatusOK, rs.StatusCode)
+	if statusCode != http.StatusOK {
+		t.Errorf("want %d, got %d", http.StatusOK, statusCode)
 	}
 
 	// And we can check that the response body written by the ping handler
 	// equals "OK".
-	defer rs.Body.Close()
-	body, _ := io.ReadAll(rs.Body)
-	if err != nil {
-		t.Fatal(err)
-	}
+	// defer rs.Body.Close()
+	// body, _ := io.ReadAll(rs.Body)
+	// if err != nil {
+	// 	t.Fatal(err)
+	// }
 
 	if string(body) != "OK" {
 		t.Errorf("want body to equal %q", "OK")
