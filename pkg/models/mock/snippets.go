@@ -6,7 +6,7 @@ import (
 	"github.com/alekslesik/snippetbox.learn/pkg/models"
 )
 
-var mockSnippet = &models.Snippet {
+var mockSnippet = &models.Snippet{
 	ID:      1,
 	Title:   "An old silent pond",
 	Content: "An old silent pond...",
@@ -26,7 +26,7 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	case 1:
 		return mockSnippet, nil
 	default:
-		return nil, models.ErrInvalidCredentials
+		return nil, models.ErrNoRecord
 	}
 }
 
