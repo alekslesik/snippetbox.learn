@@ -10,6 +10,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/alekslesik/snippetbox.learn/pkg/models"
 	"github.com/alekslesik/snippetbox.learn/pkg/models/mysql"
 	"github.com/golangcollege/sessions"
 
@@ -21,13 +22,21 @@ type contextKey string
 var contextKeyUser = contextKey("user")
 
 type application struct {
-	gopath        string
-	errorLog      *log.Logger
-	infoLog       *log.Logger
-	session       *sessions.Session
-	snippets      *mysql.SnippetModel
+	gopath   string
+	errorLog *log.Logger
+	infoLog  *log.Logger
+	session  *sessions.Session
+	snippets interface {
+		Insert(title, content, expires string) (int, error)
+		Get(id int) (*models.Snippet, error)
+		Latest() ([]*models.Snippet, error)
+	}
 	templateCache map[string]*template.Template
-	users         *mysql.UserModel
+	users         interface {
+		Insert(name, email, password string) error
+		Authenticate(email, password string) (int, error)
+		Get(id int) (*models.User, error)
+	}
 }
 
 func main() {
@@ -100,7 +109,7 @@ func main() {
 	// Use the ListenAndServeTLS() method to start the HTTPS server. We
 	// pass in the paths to the TLS certificate and corresponding private key a
 	// the two parameters.
-	err = srv.ListenAndServeTLS(gopath + "/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", gopath + "/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
+	err = srv.ListenAndServeTLS(gopath+"/src/github.com/alekslesik/snippetbox.learn/tls/cert.pem", gopath+"/src/github.com/alekslesik/snippetbox.learn/tls/key.pem")
 
 	errorLog.Fatal(err)
 }

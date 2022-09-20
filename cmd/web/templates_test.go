@@ -21,7 +21,6 @@ import (
 // 	}
 // }
 
-
 // Table test pattern
 func TestHumanDate(t *testing.T) {
 	// Create a slice of anonymous structs containing the test case name,
@@ -39,12 +38,12 @@ func TestHumanDate(t *testing.T) {
 		},
 		{
 			name: "Empty",
-			tm: time.Time{},
+			tm:   time.Time{},
 			want: "",
 		},
 		{
 			name: "GET",
-			tm: time.Date(2020, 12, 17, 10, 0, 0, 0, time.FixedZone("CET", 3600)),
+			tm:   time.Date(2020, 12, 17, 10, 0, 0, 0, time.FixedZone("CET", 3600)),
 			want: "17 Dec 2020 at 09:00",
 		},
 	}
