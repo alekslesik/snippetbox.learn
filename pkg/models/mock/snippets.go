@@ -6,7 +6,7 @@ import (
 	"github.com/alekslesik/snippetbox.learn/pkg/models"
 )
 
-var mockSnippet = &models.Snippet{
+var mockSnippet = &models.Snippet {
 	ID:      1,
 	Title:   "An old silent pond",
 	Content: "An old silent pond...",

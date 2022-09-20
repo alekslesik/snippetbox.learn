@@ -6,7 +6,7 @@ import (
 	"github.com/alekslesik/snippetbox.learn/pkg/models"
 )
 
-var mockUser = &models.User{
+var mockUser = &models.User {
 	ID:             1,
 	Name:           "Alex",
 	Email:          "alekslesik@gmail.com",
