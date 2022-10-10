@@ -32,7 +32,7 @@ func humanDate(t time.Time) string {
 // Initialize a template.FuncMap object and store it in a global variable. This
 // essentially a string-keyed map which acts as a lookup between the names of o
 // custom template functions and the functions themselves.
-var functions = template.FuncMap{
+var functions = template.FuncMap {
 	"humanDate": humanDate,
 }
 
