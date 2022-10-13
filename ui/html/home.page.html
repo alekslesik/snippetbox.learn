@@ -1,9 +1,9 @@
 {{template "base" .}}
 
-{{define "title"}}Домашняя страница{{end}}
+{{define "title"}}Home{{end}}
 
 {{define "body"}}
-<h2>Последние Заметки</h2>
+<h2>Last snippets</h2>
 {{if .Snippets}}
 <table>
     <tr>
@@ -20,6 +20,6 @@
     {{end}}
 </table>
 {{else}}
-<p>Здесь ничего нет... пока что!</p>
+<p>Here no any data yet</p>
 {{end}}
 {{end}}
