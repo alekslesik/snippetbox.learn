@@ -2,14 +2,13 @@ package main
 
 import (
 	"bytes"
-	
+
 	"net/http"
 	"testing"
 )
 
 // Test Handlers pattern
 func TestPing(t *testing.T) {
-
 	// Create a new instance of our application struct. For now, this just
 	// contains a couple of mock loggers (which discard anything written to them).
 	// app := &application{
