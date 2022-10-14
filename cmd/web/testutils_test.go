@@ -65,6 +65,38 @@ func newTestApplication(t *testing.T) *application {
 	}
 }
 
+// Create a newTestApplication with errors helper which returns an instance of our
+// application struct containing mocked dependencies.
+func newTestApplicationERR(t *testing.T) *application {
+	gopath, ok := os.LookupEnv("GOPATH")
+	if !ok {
+		t.Fatal("GOPATH variable not exists")
+	}
+
+	// Create an instance of the template cache.
+	templateCache, err := newTemplateCache(gopath + "/src/github.com/alekslesik/snippetbox.learn/ui/html")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// Create a session manager instance, with the same settings as production.
+	session := sessions.New([]byte("3dSm5MnygFHh7XidAtbskXrjbwfoJcbJ"))
+	session.Lifetime = 12 * time.Hour
+	session.Secure = true
+
+	// Initialize the dependencies, using the mocks for the loggers and
+	// database models.
+	return &application{
+		gopath:        gopath,
+		errorLog:      log.New(ioutil.Discard, "", 0),
+		infoLog:       log.New(ioutil.Discard, "", 0),
+		session:       session,
+		snippets:      &mock.SnippetModelERR{},
+		templateCache: templateCache,
+		users:         &mock.UserModel{},
+	}
+}
+
 // Define a custom testServer type which anonymously embeds a httptest.Server instance.
 type testServer struct {
 	*httptest.Server
@@ -117,4 +149,16 @@ func (ts *testServer) get(t *testing.T, urlPath string) (int, http.Header, []byt
 	}
 
 	return rs.StatusCode, rs.Header, body
+}
+
+// Implement a get method on our custom testServer type. This makes a GET
+// request to a given url path on the test server, and returns the response
+// status code, headers and body.
+func (ts *testServer) getERR(t *testing.T, urlPath string) (int) {
+	rs, err := ts.Client().Get(ts.URL + urlPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	return rs.StatusCode
 }

@@ -74,6 +74,57 @@ func TestPing(t *testing.T) {
 	}
 }
 
+func TestHome(t *testing.T) {
+	// Create a new instance of our application struct which uses the mocked
+	// dependencies
+	app := newTestApplication(t)
+	// Establish a new test server for running end-to-end tests.
+	ts := newTestServer(t, app.routes())
+	defer ts.Close()
+
+	// Create a new instance of our application with errors struct which uses the mocked
+	// dependencies.
+	appERR := newTestApplicationERR(t)
+	// Establish a new test server for running end-to-end tests.
+	tsERR := newTestServer(t, appERR.routes())
+
+	testCases := []struct {
+		desc        string
+		urlPath     string
+		err         bool
+		wantCode    int
+		wantBody    []byte
+	}{
+		{
+			desc: "Valid", urlPath: "/", err: false, wantCode: http.StatusOK , wantBody: []byte(`<th>Title</th>`),
+		},
+		{
+			desc: "Latest() ERR", urlPath: "/", err: true, wantCode: http.StatusInternalServerError, wantBody: nil,
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			switch tC.err {
+			case false:
+				code, _, body := ts.get(t, tC.urlPath)
+
+				if code != tC.wantCode {
+					t.Errorf("want %v, get %v", tC.wantCode, code)
+				}
+
+				if !bytes.Contains(body, tC.wantBody) {
+					t.Errorf("want body to contain %q", tC.wantBody)
+				}
+			case true:
+				code := tsERR.getERR(t, tC.urlPath)
+				if code != tC.wantCode {
+					t.Errorf("want %v, get %v", tC.wantCode, code)
+				}
+			}
+		})
+	}
+}
+
 func TestShowSnippet(t *testing.T) {
 	// Create a new instance of our application struct which uses the mocked // dependencies.
 	app := newTestApplication(t)
@@ -113,7 +164,6 @@ func TestShowSnippet(t *testing.T) {
 	}
 
 }
-
 
 func TestSignupUser(t *testing.T) {
 	// Create the application struct containing our mocked dependencies and set
