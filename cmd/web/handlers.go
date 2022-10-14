@@ -34,6 +34,42 @@ func (app *application) about(w http.ResponseWriter, r *http.Request)  {
 	app.render(w, r, "about.page.html", &templateData{})
 }
 
+// Login user GET /user/login.
+func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
+	app.render(w, r, "login.page.html", &templateData{
+		Form: forms.New(nil),
+	})
+}
+
+// Login user POST /user/login.
+func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	// Check whether the credentials are valid. If they're not, add a generic
+	// message to the form failures map and re-display the login page.
+	form := forms.New(r.PostForm)
+	id, err := app.users.Authenticate(form.Get("email"), form.Get("password"))
+	if err == models.ErrInvalidCredentials {
+		form.Errors.Add("generic", "Email or Password is incorrect")
+		app.render(w, r, "login.page.html", &templateData{Form: form})
+		return
+	} else if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	// Add the ID of the current user to the session
+	app.session.Put(r, "userID", id)
+
+	// Redirect the user to the create snippet page.
+	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
+}
+
+
 // Create snippet GET /snippet/create
 func (app *application) createSnippetForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "create.page.html", &templateData{
@@ -153,41 +189,6 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 
 	// GET
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
-}
-
-// Login user GET /user/login.
-func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
-	app.render(w, r, "login.page.html", &templateData{
-		Form: forms.New(nil),
-	})
-}
-
-// Login user POST /user/login.
-func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
-	err := r.ParseForm()
-	if err != nil {
-		app.clientError(w, http.StatusBadRequest)
-		return
-	}
-
-	// Check whether the credentials are valid. If they're not, add a generic
-	// message to the form failures map and re-display the login page.
-	form := forms.New(r.PostForm)
-	id, err := app.users.Authenticate(form.Get("email"), form.Get("password"))
-	if err == models.ErrInvalidCredentials {
-		form.Errors.Add("generic", "Email or Password is incorrect")
-		app.render(w, r, "login.page.html", &templateData{Form: form})
-		return
-	} else if err != nil {
-		app.serverError(w, err)
-		return
-	}
-
-	// Add the ID of the current user to the session
-	app.session.Put(r, "userID", id)
-
-	// Redirect the user to the create snippet page.
-	http.Redirect(w, r, "/snippet/create", http.StatusSeeOther)
 }
 
 // Logout user POST.

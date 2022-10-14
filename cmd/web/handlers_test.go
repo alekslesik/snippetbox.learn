@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	
 	"net/http"
 	"testing"
 )
@@ -89,14 +90,14 @@ func TestHome(t *testing.T) {
 	tsERR := newTestServer(t, appERR.routes())
 
 	testCases := []struct {
-		desc        string
-		urlPath     string
-		err         bool
-		wantCode    int
-		wantBody    []byte
+		desc     string
+		urlPath  string
+		err      bool
+		wantCode int
+		wantBody []byte
 	}{
 		{
-			desc: "Valid", urlPath: "/", err: false, wantCode: http.StatusOK , wantBody: []byte(`<th>Title</th>`),
+			desc: "Valid", urlPath: "/", err: false, wantCode: http.StatusOK, wantBody: []byte(`<th>Title</th>`),
 		},
 		{
 			desc: "Latest() ERR", urlPath: "/", err: true, wantCode: http.StatusInternalServerError, wantBody: nil,
@@ -120,6 +121,75 @@ func TestHome(t *testing.T) {
 				if code != tC.wantCode {
 					t.Errorf("want %v, get %v", tC.wantCode, code)
 				}
+			}
+		})
+	}
+}
+
+func TestAbout(t *testing.T) {
+	// Create a new instance of our application struct which uses the mocked
+	// dependencies
+	app := newTestApplication(t)
+	// Establish a new test server for running end-to-end tests.
+	ts := newTestServer(t, app.routes())
+	defer ts.Close()
+
+	testCases := []struct {
+		desc     string
+		urlPath  string
+		wantCode int
+		wantBody []byte
+	}{
+		{
+			desc: "Valid", urlPath: "/about", wantCode: http.StatusOK, wantBody: []byte(`Lorem ipsum dolor sit amet consectetur`),
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			code, _, body := ts.get(t, tC.urlPath)
+
+			if code != tC.wantCode {
+				t.Errorf("want %v, get %v", tC.wantCode, code)
+			}
+
+			if !bytes.Contains(body, tC.wantBody) {
+				t.Errorf("want body to contain %q", tC.wantBody)
+			}
+		})
+	}
+}
+
+func TestLoginUserForm(t *testing.T) {
+	// Create a new instance of our application struct which uses the mocked
+	// dependencies
+	app := newTestApplication(t)
+	// Establish a new test server for running end-to-end tests.
+	ts := newTestServer(t, app.routes())
+	defer ts.Close()
+
+	testCases := []struct {
+		desc     string
+		urlPath  string
+		wantCode int
+		wantBody []byte
+	}{
+		{
+			desc:     "Valid",
+			urlPath:  "/user/login",
+			wantCode: http.StatusOK,
+			wantBody: []byte(`<input type="submit" value="Login">`),
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			code, _, body := ts.get(t, tC.urlPath)
+
+			if code != tC.wantCode {
+				t.Errorf("want %v, get %v", tC.wantCode, code)
+			}
+
+			if !bytes.Contains(body, tC.wantBody) {
+				t.Errorf("want body to contain %q,\n body %q", tC.wantBody, body)
 			}
 		})
 	}
