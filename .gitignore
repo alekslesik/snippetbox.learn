@@ -1,1 +1,4 @@
 cmd/web/__debug_bin.exe
+tmp/info.log
+.gitignore
+tmp/*
