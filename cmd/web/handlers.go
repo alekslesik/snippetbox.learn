@@ -11,12 +11,12 @@ import (
 	"strconv"
 )
 
-// Ping
+// Ping GET /ping
 func ping(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-// Home page GET
+// Home page GET /
 func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	s, err := app.snippets.Latest()
 	if err != nil {
@@ -29,19 +29,19 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// About page GET
+// About page GET /about
 func (app *application) about(w http.ResponseWriter, r *http.Request)  {
 	app.render(w, r, "about.page.html", &templateData{})
 }
 
-// Login user GET /user/login.
+// Login user GET /user/login
 func (app *application) loginUserForm(w http.ResponseWriter, r *http.Request) {
 	app.render(w, r, "login.page.html", &templateData{
 		Form: forms.New(nil),
 	})
 }
 
-// Login user POST /user/login.
+// Login user POST /user/login
 func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -190,7 +190,7 @@ func (app *application) signupUser(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
-// Logout user POST.
+// Logout user POST /user/logout
 func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
 
 	// Remove iserID from session.

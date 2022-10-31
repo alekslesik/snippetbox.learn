@@ -26,6 +26,8 @@ func (m *SnippetModel) Get(id int) (*models.Snippet, error) {
 	switch id {
 	case 1:
 		return mockSnippet, nil
+	case 100 :
+		return nil, models.ErrDuplicateEmail
 	default:
 		return nil, models.ErrNoRecord
 	}
