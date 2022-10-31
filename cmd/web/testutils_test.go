@@ -74,15 +74,13 @@ func newTestApplicationERR(t *testing.T) *application {
 	}
 
 	// Create an instance of the template cache.
-	templateCache, err := newTemplateCache(gopath + "/src/github.com/alekslesik/snippetbox.learn/ui/html")
+	templateCache, err := newTemplateCache("")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	// Create a session manager instance, with the same settings as production.
-	session := sessions.New([]byte("3dSm5MnygFHh7XidAtbskXrjbwfoJcbJ"))
-	session.Lifetime = 12 * time.Hour
-	session.Secure = true
+	session := sessions.New([]byte(""))
 
 	// Initialize the dependencies, using the mocks for the loggers and
 	// database models.

@@ -37,7 +37,7 @@ func (m *SnippetModel) Latest() ([]*models.Snippet, error) {
 
 type SnippetModelERR struct{}
 
-// Rewrite all mysql.SnippetModel methods
+// Rewrite all mysql.SnippetModel methods, return errors
 func (m *SnippetModelERR) Insert(title, content, expires string) (int, error) {
 	return 0, errors.New("test error Insert()")
 }
