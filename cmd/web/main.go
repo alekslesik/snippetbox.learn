@@ -46,14 +46,23 @@ func main() {
 	secret := flag.String("secret", "s6Ndh+pPbnzHbS*+9Pk8qGWhTzbpa@ge", "Secret")
 	flag.Parse()
 
-	// Loggers
-	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
-	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
-
+	// Go path
 	gopath, ok := os.LookupEnv("GOPATH")
 	if !ok {
-		errorLog.Fatal("GOPATH variable not exists")
+		log.Fatal("GOPATH is not defined")
 	}
+
+	// Open/create log file
+	f, err := os.OpenFile(gopath + "/src/github.com/alekslesik/snippetbox.learn/tmp/info.log", os.O_RDWR|os.O_CREATE, 0666)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	// Loggers
+	infoLog := log.New(f, "INFO\t", log.Ldate|log.Ltime)
+	// infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(f, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	// Open DB connection pull
 	db, err := openDB(*dsn)
