@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+type EmptyHandler http.Handler
+
 // Test Handlers pattern
 func TestPing(t *testing.T) {
 	// Create a new instance of our application struct. For now, this just
@@ -242,6 +244,7 @@ func TestSignupUser(t *testing.T) {
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
 
+
 	// Make a GET /user/signup request and then extract the CSRF token from the
 	// response body.
 	_, _, body := ts.get(t, "/user/signup")
@@ -249,5 +252,37 @@ func TestSignupUser(t *testing.T) {
 
 	// Log the CSRF token value in our test output.
 	t.Log(csrfToken)
+}
 
+func TestLoginUser(t *testing.T) {
+	// Create a new instance of our application struct which uses the mocked
+	// dependencies
+	app := newTestApplication(t)
+	// Establish a new test server for running end-to-end tests.
+	ts := newTestServer(t, app.routes())
+	defer ts.Close()
+
+	testCases := []struct {
+		desc     string
+		urlPath  string
+		wantCode int
+		wantBody []byte
+	}{
+		{
+			desc: "Valid", urlPath: "/user/login", wantCode: http.StatusOK, wantBody: []byte(`Password`),
+		},
+	}
+	for _, tC := range testCases {
+		t.Run(tC.desc, func(t *testing.T) {
+			code, _, body := ts.get(t, tC.urlPath)
+
+			if code != tC.wantCode {
+				t.Errorf("want %v, get %v", tC.wantCode, code)
+			}
+
+			if !bytes.Contains(body, tC.wantBody) {
+				t.Errorf("want body to contain %q", tC.wantBody)
+			}
+		})
+	}
 }
