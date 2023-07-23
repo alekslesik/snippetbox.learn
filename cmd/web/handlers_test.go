@@ -11,7 +11,7 @@ type EmptyHandler http.Handler
 
 // Test Handlers pattern
 
-// Ping GET /ping
+// ping() GET /ping
 func TestPing(t *testing.T) {
 	// Create a new instance of our application struct. For now, this just
 	// contains a couple of mock loggers (which discard anything written to them).
@@ -19,7 +19,7 @@ func TestPing(t *testing.T) {
 	// 	errorLog: log.New(ioutil.Discard, "", 0),
 	// 	infoLog:  log.New(ioutil.Discard, "", 0),
 	// }
-	app := newTestApplication(t)
+	app := newTestApplication(t, false)
 
 	// We then use the httptest.NewTLSServer() function to create a new test
 	// server, passing in the value returned by our app.routes() method as the
@@ -78,11 +78,11 @@ func TestPing(t *testing.T) {
 	}
 }
 
-// Home page GET /
+// home() GET /
 func TestHome(t *testing.T) {
 	// Create a new instance of our application struct which uses the mocked
 	// dependencies
-	app := newTestApplication(t)
+	app := newTestApplication(t, false)
 	// Establish a new test server for running end-to-end tests.
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
@@ -130,11 +130,11 @@ func TestHome(t *testing.T) {
 	}
 }
 
-// About page GET /about
+// about() GET /about
 func TestAbout(t *testing.T) {
 	// Create a new instance of our application struct which uses the mocked
 	// dependencies
-	app := newTestApplication(t)
+	app := newTestApplication(t, false)
 	// Establish a new test server for running end-to-end tests.
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
@@ -164,11 +164,11 @@ func TestAbout(t *testing.T) {
 	}
 }
 
-// Login user GET /user/login
+// loginUserForm() GET /user/login
 func TestLoginUserForm(t *testing.T) {
 	// Create a new instance of our application struct which uses the mocked
 	// dependencies
-	app := newTestApplication(t)
+	app := newTestApplication(t, false)
 	// Establish a new test server for running end-to-end tests.
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
@@ -180,10 +180,7 @@ func TestLoginUserForm(t *testing.T) {
 		wantBody []byte
 	}{
 		{
-			desc:     "Valid",
-			urlPath:  "/user/login",
-			wantCode: http.StatusOK,
-			wantBody: []byte(`<input type="submit" value="Login">`),
+			desc: "Valid", urlPath: "/user/login", wantCode: http.StatusOK, wantBody: []byte(`<input type="submit" value="Login">`),
 		},
 	}
 	for _, tC := range testCases {
@@ -201,32 +198,50 @@ func TestLoginUserForm(t *testing.T) {
 	}
 }
 
-// Login user POST /user/login
-func TestLoginUser(t *testing.T) {
-	testCases := []struct {
-		desc	string
+//TODO loginUser() POST /user/login
 
+// TODO createSnippetForm() GET /snippet/create
+func TestCreateSnippetForm(t *testing.T) {
+	// Create a new instance of our application struct which uses the mocked
+	// dependencies
+	app := newTestApplication(t, true)
+	// Establish a new test server for running end-to-end tests.
+	ts := newTestServer(t, app.routes())
+	defer ts.Close()
+
+	testCases := []struct {
+		desc     string
+		urlPath  string
+		wantCode int
+		wantBody []byte
 	}{
 		{
-			desc: "",
-
+			desc: "Valid", urlPath: "/snippet/create", wantCode: http.StatusOK, wantBody: []byte(`<input type="submit" value="Publish snippet">`),
 		},
 	}
 	for _, tC := range testCases {
 		t.Run(tC.desc, func(t *testing.T) {
+			t.Run(tC.desc, func(t *testing.T) {
+				code, _, body := ts.get(t, tC.urlPath)
 
+				if code != tC.wantCode {
+					t.Errorf("want %v, get %v", tC.wantCode, code)
+				}
+
+				if !bytes.Contains(body, tC.wantBody) {
+					t.Errorf("want body to contain %q", tC.wantBody)
+				}
+			})
 		})
 	}
 }
 
-//TODO Create snippet GET /snippet/create
+//TODO createSnippet() POST /snippet/create
 
-//TODO Create snippet POST /snippet/create
-
-// Show snippet GET /snippet/:id
+// showSnippet() GET /snippet/:id
 func TestShowSnippet(t *testing.T) {
 	// Create a new instance of our application struct which uses the mocked // dependencies.
-	app := newTestApplication(t)
+	app := newTestApplication(t, false)
 
 	// Establish a new test server for running end-to-end tests.
 	ts := newTestServer(t, app.routes())
@@ -265,17 +280,16 @@ func TestShowSnippet(t *testing.T) {
 
 }
 
-//TODO Sign up user GET /user/signup
+//TODO signupUserForm() GET /user/signup
 
-// Sign up user POST /user/signup
+// signupUser() POST /user/signup
 func TestSignupUser(t *testing.T) {
 	// Create the application struct containing our mocked dependencies and set
 	// up the test server for running and end-to-end test.
-	app := newTestApplication(t)
+	app := newTestApplication(t, false)
 
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
-
 
 	// Make a GET /user/signup request and then extract the CSRF token from the
 	// response body.
@@ -286,4 +300,4 @@ func TestSignupUser(t *testing.T) {
 	t.Log(csrfToken)
 }
 
-//TODO Logout user POST /user/logout
+//TODO logoutUser() POST /user/logout

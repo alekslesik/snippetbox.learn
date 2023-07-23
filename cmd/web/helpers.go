@@ -72,6 +72,7 @@ func (app *application) addDefaultData(td *templateData, r *http.Request) *templ
 	td.AuthenticatedUser = app.authenticatedUser(r)
 	// Add the CSRF token to the templateData struct.
 	td.CSRFToken = nosurf.Token(r)
+	//
 
 	return td
 }

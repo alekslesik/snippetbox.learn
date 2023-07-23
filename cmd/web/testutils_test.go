@@ -20,7 +20,7 @@ import (
 // HTML for our user signup page.
 var csrfTokenRX = regexp.MustCompile(`<input type="hidden" name="csrf_token" value='(.?)`)
 
-func extractCSRFToken(t *testing.T, body []byte) string  {
+func extractCSRFToken(t *testing.T, body []byte) string {
 	// Use the FindSubmatch method to extract the token from the HTML body.
 	// Note that this returns an array with the entire matched pattern in the
 	// first position, and the values of any captured data in the subsequent
@@ -35,7 +35,7 @@ func extractCSRFToken(t *testing.T, body []byte) string  {
 
 // Create a newTestApplication helper which returns an instance of our
 // application struct containing mocked dependencies.
-func newTestApplication(t *testing.T) *application {
+func newTestApplication(t *testing.T, auth bool) *application {
 	gopath, ok := os.LookupEnv("GOPATH")
 	if !ok {
 		t.Fatal("GOPATH variable not exists")
@@ -51,6 +51,11 @@ func newTestApplication(t *testing.T) *application {
 	session := sessions.New([]byte("3dSm5MnygFHh7XidAtbskXrjbwfoJcbJ"))
 	session.Lifetime = 12 * time.Hour
 	session.Secure = true
+	// if need auth user
+	// if auth {
+	// 	// Add the ID of the current user to the session
+	// 	session.Put(il, "userID", 1)
+	// }
 
 	// Initialize the dependencies, using the mocks for the loggers and
 	// database models.
@@ -152,7 +157,7 @@ func (ts *testServer) get(t *testing.T, urlPath string) (int, http.Header, []byt
 // Implement a get method on our custom testServer type. This makes a GET
 // request to a given url path on the test server, and returns the response
 // status code, headers and body.
-func (ts *testServer) getERR(t *testing.T, urlPath string) (int) {
+func (ts *testServer) getERR(t *testing.T, urlPath string) int {
 	rs, err := ts.Client().Get(ts.URL + urlPath)
 	if err != nil {
 		t.Fatal(err)

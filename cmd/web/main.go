@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"database/sql"
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -114,6 +115,7 @@ func main() {
 	}
 
 	infoLog.Printf("Server started on http://127.0.0.1%s", *addr)
+	fmt.Printf("Server started on http://127.0.0.1%s", *addr)
 
 	// Use the ListenAndServeTLS() method to start the HTTPS server. We
 	// pass in the paths to the TLS certificate and corresponding private key a

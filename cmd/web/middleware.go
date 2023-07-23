@@ -97,6 +97,7 @@ func (app *application) authenticate(next http.Handler) http.Handler {
 		// authenticated (logged in) user. We create a new copy of the
 		// request with the user information added to the request context, and
 		// call the next handler in the chain *using this new copy of the request*.
+		// TODO how it works
 		ctx := context.WithValue(r.Context(), contextKeyUser, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
